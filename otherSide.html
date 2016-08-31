@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Other Side</title>
+    <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJklg8Oe_jPT9_3QTiiPBmtVdKPxaUboY&"></script>
+	<style>
+
+        body {
+            color: #c30200;
+            background-color: #f8fefb;
+            font-family: 'Lobster', cursive;
+            font-size: 21px;
+            text-align: center;
+        }
+
+        .main {
+            width: 75%;
+            margin-left: 13%;
+        }
+
+        h1 {
+            font-size: 76px;
+            line-height: 1;
+        }
+
+        h5 {
+            text-align: left;
+        }
+
+        p {
+            line-height: 1;
+            margin-top: -40px;
+            padding-bottom: 30px;
+        }
+
+        .form {
+            position: relative;
+            padding-bottom: 30px;
+        }
+
+        input {
+            display: inline-block;
+            width: 444px;
+            padding: 5px 10px;
+            color: #000000;
+            font-size: 1.25em;
+            border: 0;
+            box-shadow: 0 0 5px #c30200;
+        }
+
+        input[type="button"] {
+            width: 111px;
+            border: none;
+            color: #ffffff;
+            font-family: 'Lobster', cursive;
+            background-color: #630b00;
+            box-shadow: none;
+            cursor: pointer;
+        }
+
+        input[type="button"]:hover,
+        input[type="button"]:focus {
+            background-color: #c30200;
+        }
+
+	</style>
+</head>
+<body>
+    <section class="main">
+        <h5 id="appear" style="display:none;">Other Side</h5>
+        <div id="disappear">
+            <h1>Other Side</h1>
+            <p>Enter a place to see what's on the other side of the world.</p>
+        </div>
+        <section class="form">
+            <form action="/" method="get" id="">
+                <input id="place" type="" placeholder="Leżajsk" required>
+                <input id="search" type="button" value="Search">
+            </form>
+        </section>
+    </section>
+    <section class="main">
+        <div id="map-canvas" style="float: left; width: 400px; height: 400px; margin: 0 20px 50px 40px; padding: 0;"></div>
+        <div id="map-canvas2" style="float: left; width: 400px; height: 400px; margin: 0 0 50px 0; padding: 0;"></div>
+    </section>
+
+    <script>
+
+        function codeAddress() {
+            var geocoder = new google.maps.Geocoder(),
+                input = get('place'),
+                address = input.value,
+                lat, lng, latlng,
+                reverseLat, reverseLng, reverseLatlng,
+                map, map2, marker, marker2;
+
+            geocoder.geocode( { 'address': address}, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    lat = results[0].geometry.location.lat();
+                    lng = results[0].geometry.location.lng();
+                    reverseLat = lat < 0 ? 0 - lat : 0 - lat;
+                    reverseLng = lng < 0 ? 0 - lng : 0 - lng;
+                    latlng = { lat: lat, lng: lng };
+                    reverseLatlng = { lat: reverseLat, lng: reverseLng };
+                    console.log(latlng);console.log(reverseLatlng);
+
+                    map = new google.maps.Map(get('map-canvas'), {
+                        zoom: 3,
+                        center: results[0].geometry.location
+                    });
+                    marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
+                    });
+
+                    map2 = new google.maps.Map(get('map-canvas2'), {
+                                zoom: 3,
+                                center: reverseLatlng
+                    });
+                    marker2 = new google.maps.Marker({
+                        position: reverseLatlng,
+                        map: map2
+                    });
+
+
+                } else {
+                  alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+            
+            input.placeholder = address;
+            input.value = '';
+        }
+
+        function get (id) {
+            return document.getElementById(id);
+        }
+
+        var button = get('search');
+
+        if (document.addEventListener) { // W3C
+            button.addEventListener('click', codeAddress, false);
+        } else if (document.attachEvent) { // IE
+            button.attachEvent('click', codeAddress);
+        } else { // last resort
+            button.onclick = codeAddress;
+        }
+
+    </script>
+
+</body></html>
